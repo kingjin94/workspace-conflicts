@@ -1,0 +1,46 @@
+[project]
+name = "workspace-demo"
+version = "0.1.0"
+description = "Demo uv workspace with packages A and B"
+requires-python = ">=3.9"
+dependencies = [
+    "package-a",
+    "package-b",
+    "package-c",
+    "package-d",
+]
+
+[project.optional-dependencies]
+prod = [
+    "package-a[prod]",
+    "package-b[prod]",
+    "package-c[prod]",
+    "package-d[prod]",
+]
+non-prod = [
+    "package-a[non-prod]",
+    "package-b[non-prod]",
+    "package-c[non-prod]",
+    "package-d[non-prod]",
+]
+
+[tool.uv.workspace]
+members = ["packages/package-a", "packages/package-b", "packages/package-c", "packages/package-d"]
+
+[tool.uv.sources]
+package-a = { workspace = true }
+package-b = { workspace = true }
+package-c = { workspace = true }
+package-d = { workspace = true }
+
+[tool.uv]
+conflicts = [
+    [
+        { extra = "prod" },
+        { extra = "non-prod" },
+    ],
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
