@@ -12,6 +12,33 @@ This repository demonstrates how `uv.lock` file size scales with conflict declar
 
 ## Branches
 
+### `repro/uv-check-refresh-false-positive` — MWE for `uv lock --check --refresh` false positive
+
+In a workspace where sub-packages declare conflicting extras, `uv lock --check --refresh`
+reports "lockfile needs to be updated" even when `uv lock --refresh` produces zero changes.
+
+```bash
+git checkout repro/uv-check-refresh-false-positive
+bash repro-check-refresh.sh
+```
+
+Expected output (steps 1 and 2 pass, step 3 **should** also pass but doesn't):
+```
+=== Step 1: uv lock --refresh (writes result) ===
+Resolved 7 packages in 170ms
+Exit code: 0
+
+=== Step 2: git diff uv.lock (should be empty) ===
+No changes — lockfile is up to date
+
+=== Step 3: uv lock --check --refresh (should also pass) ===
+Resolved 7 packages in 151ms
+The lockfile at `uv.lock` needs to be updated, but `--check` was provided.
+```
+
+Steps 1 and 2 confirm the lockfile is genuinely up to date. Step 3 is a false positive.
+Tested on **uv 0.10.11**. Related upstream issues: astral-sh/uv#13614, astral-sh/uv#16839.
+
 ### `master` - With conflicts in all packages
 All packages declare their extras as conflicting:
 ```toml
