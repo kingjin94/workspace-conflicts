@@ -37,7 +37,7 @@ The lockfile at `uv.lock` needs to be updated, but `--check` was provided.
 ```
 
 Steps 1 and 2 confirm the lockfile is genuinely up to date. Step 3 is a false positive.
-Tested on **uv 0.10.11**. Related upstream issues: astral-sh/uv#13614, astral-sh/uv#16839.
+Tested on **uv 0.10.11**. Filed as astral-sh/uv#18553. Related prior art: astral-sh/uv#13614, astral-sh/uv#15869, astral-sh/uv#16839.
 
 ### `master` - With conflicts in all packages
 All packages declare their extras as conflicting:
