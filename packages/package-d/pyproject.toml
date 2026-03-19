@@ -2,7 +2,7 @@
 name = "package-d"
 version = "0.1.0"
 description = "Package D in the workspace"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 prod = ["psycopg2>=2.9.0"]

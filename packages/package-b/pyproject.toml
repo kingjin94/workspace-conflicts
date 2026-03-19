@@ -2,11 +2,14 @@
 name = "package-b"
 version = "0.1.0"
 description = "Package B in the workspace"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 prod = ["psycopg2>=2.9.0"]
 non-prod = ["psycopg2-binary>=2.9.0"]
+
+[dependency-groups]
+dev = ["coverage>=7.12.0"]
 
 [tool.uv]
 conflicts = [
