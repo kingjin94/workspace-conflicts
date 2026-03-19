@@ -12,6 +12,49 @@ This repository demonstrates how `uv.lock` file size scales with conflict declar
 
 ## Branches
 
+### `repro/silent-lock-repair` — MWE for silent `uv.lock` inconsistency and auto-repair
+
+An inconsistent `uv.lock` — where the resolved `[[package]]` version contradicts
+a `specifier` in `[package.metadata]` — is accepted silently by `uv lock --check`
+and by plain `uv lock`. Only `uv lock --refresh` detects and repairs it, without
+any warning or explanation.
+
+**Commit history on this branch:**
+1. Adds `coverage` as a dev dependency (`package-a: ==7.12.0`, `package-b: >=7.12.0`)
+2. Renovate bumps both to `7.13.4`, `uv lock` resolves consistently to `7.13.4`
+3. Tests fail; a partial rollback reverts `package-b` specifier to `>=7.12.0` and
+   manually downgrades the resolved `[[package]]` entry to `7.12.0`, but misses
+   the `==7.13.4` pin in `package-a` — leaving the lock inconsistent
+4. Repro script demonstrates the bug
+
+```bash
+git checkout repro/silent-lock-repair
+bash repro-silent-lock-repair.sh
+```
+
+Expected output (steps 2 and 3 **should** fail but don't):
+```
+=== Step 2: uv lock --check (should catch the inconsistency) ===
+Resolved 8 packages in 6ms
+Exit code: 0  ← exits 0 despite inconsistency (FALSE NEGATIVE)
+
+=== Step 3: uv lock (no change — uses cache, inconsistency survives) ===
+Resolved 8 packages in 4ms
+Exit code: 0
+No changes — broken lock survives plain 'uv lock'
+
+=== Step 4: uv lock --refresh (silently repairs — no warning issued) ===
+Resolved 8 packages in 191ms
+Updated coverage v7.12.0 -> v7.13.4
+Exit code: 0
+```
+
+Tested on **uv 0.10.11**.
+
+The practical risk: CI using `uv lock --check` gives a false green while resolving
+the wrong version. Any subsequent `uv lock --refresh` silently introduces the
+correct (but different) version with no explanation.
+
 ### `master` - With conflicts in all packages
 All packages declare their extras as conflicting:
 ```toml
