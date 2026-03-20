@@ -8,14 +8,6 @@ requires-python = ">=3.9"
 prod = ["psycopg2>=2.9.0"]
 non-prod = ["psycopg2-binary>=2.9.0"]
 
-[tool.uv]
-conflicts = [
-    [
-        { extra = "prod" },
-        { extra = "non-prod" },
-    ],
-]
-
 [tool.hatch.build.targets.wheel]
 packages = ["src/package_d"]
 
